@@ -6,6 +6,9 @@ import {
   getProducts,
   updateProductById,
   deleteProductById,
+  createProductReview,
+  deleteReview,
+  getProductReviews,
 } from '../controllers/productController';
 
 import { authorizeRoles, isAuthenticatedUser } from '../middlewares/auth';
@@ -33,5 +36,8 @@ router.delete(
   authorizeRoles('admin', 'user'),
   deleteProductById
 );
+router.put('/review', isAuthenticatedUser, createProductReview);
+router.get('/reviews', getProductReviews);
+router.delete('/reviews', isAuthenticatedUser, deleteReview);
 
 module.exports = router;
