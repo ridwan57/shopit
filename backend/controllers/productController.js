@@ -34,7 +34,7 @@ export const getProductById = catchAsyncErrors(async (req, res, next) => {
     const product = await Product.findById(req.params.id);
 
     if (product) {
-      res.send(product);
+      res.send({ product });
     }
   } catch (error) {
     return next(new ErrorHandler(error, 400));

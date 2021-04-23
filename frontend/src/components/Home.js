@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import MetaData from "../components/layout/MetaData";
+import Loader from "../components/layout/Loader";
 import SingleProduct from "../components/Product/SingleProduct";
 import "../App.css";
 import { getProducts } from "../function/products";
@@ -11,6 +12,8 @@ import {
   productSuccessAction,
 } from "../actions/productActions";
 
+import { toast } from "react-toastify";
+
 const Home = () => {
   const {
     products: { loading },
@@ -20,43 +23,51 @@ const Home = () => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
+    let isCurrent = true;
     productClearErrorsAction(dispatch);
     productRequestAction(dispatch);
 
-    const unsub = getProducts()
+    getProducts()
       .then((res) => {
-        console.log("products:", res.data);
-        productSuccessAction(dispatch, res.data);
-        setProducts(res.data.products);
+        if (isCurrent) {
+          console.log("products:", res.data);
+          productSuccessAction(dispatch, res.data);
+          toast.success(`${res.data.products.length} Products fetched`);
+
+          setProducts(res.data.products);
+        }
       })
       .catch((err) => {
-        console.log("err:", err);
-        productFailAction(dispatch, err);
+        if (isCurrent) {
+          console.log("err:", err);
+          productFailAction(dispatch, err);
+        }
       });
-    return () => unsub;
+    return () => {
+      isCurrent = false;
+    };
   }, [dispatch]);
 
   const productLayout = () =>
     products.length > 0 &&
-    products.map((product) => <SingleProduct product={product} />);
+    products.map((product) => (
+      <SingleProduct key={product._id} product={product} />
+    ));
 
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <>
-      {loading ? (
-        <h1>loading...</h1>
-      ) : (
-        <>
-          <MetaData title={"Buy Best Products Online"} />
-          <h1 id="products_heading">Latest Products</h1>
+      <MetaData title={"Buy Best Products Online"} />
+      <h1 id="products_heading">Latest Products</h1>
 
-          <section id="products" className="container mt-5">
-            <div className="row">
-              {/* {JSON.stringify(products)} */}
-              {productLayout()}
-            </div>
-          </section>
-        </>
-      )}
+      <section id="products" className="container mt-5">
+        <div className="row">
+          {/* {JSON.stringify(products)} */}
+          {productLayout()}
+        </div>
+      </section>
     </>
   );
 };
