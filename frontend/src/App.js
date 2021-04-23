@@ -15,6 +15,7 @@ function App() {
         <ToastContainer position="top-center" />
         <div className="container container-fluid">
           <Route exact path="/" component={Home} />
+          <Route exact path="/search/:keyword" component={Home} />
           <Route exact path="/product/:id" component={ProductDetails} />
         </div>
 

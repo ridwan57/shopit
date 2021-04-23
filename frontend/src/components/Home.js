@@ -14,8 +14,11 @@ import {
 } from "../actions/productActions";
 
 import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 
 const Home = () => {
+  const { keyword = "" } = useParams();
+  console.log("keyword:", keyword);
   const { loading, resPerPage, productsCount } = useSelector((state) => ({
     ...state.products,
   }));
@@ -29,12 +32,13 @@ const Home = () => {
     console.log("page:", page);
     setCurrentPage(page);
   };
+
   const loadProducts = React.useCallback(
     (isCurrent) => {
       productClearErrorsAction(dispatch);
       productRequestAction(dispatch);
 
-      getProducts(currentPage)
+      getProducts(keyword, currentPage)
         .then((res) => {
           if (isCurrent) {
             console.log("products:", res.data);
@@ -51,7 +55,7 @@ const Home = () => {
           }
         });
     },
-    [currentPage, dispatch]
+    [currentPage, dispatch, keyword]
   );
 
   useEffect(() => {
