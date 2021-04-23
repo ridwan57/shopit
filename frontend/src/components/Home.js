@@ -5,6 +5,7 @@ import SingleProduct from "../components/Product/SingleProduct";
 import "../App.css";
 import { getProducts } from "../function/products";
 import { useDispatch, useSelector } from "react-redux";
+import Pagination from "react-js-pagination";
 import {
   productClearErrorsAction,
   productFailAction,
@@ -15,38 +16,53 @@ import {
 import { toast } from "react-toastify";
 
 const Home = () => {
-  const {
-    products: { loading },
-  } = useSelector((state) => ({ ...state }));
+  const { loading, resPerPage, productsCount } = useSelector((state) => ({
+    ...state.products,
+  }));
+  console.log("resPerPage:", resPerPage);
+  console.log("productsCount:", productsCount);
 
   const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const setCurrentPageNo = (page) => {
+    console.log("page:", page);
+    setCurrentPage(page);
+  };
+  const loadProducts = React.useCallback(
+    (isCurrent) => {
+      productClearErrorsAction(dispatch);
+      productRequestAction(dispatch);
+
+      getProducts(currentPage)
+        .then((res) => {
+          if (isCurrent) {
+            console.log("products:", res.data);
+            productSuccessAction(dispatch, res.data);
+            toast.success(`${res.data.products.length} Products fetched`);
+
+            setProducts(res.data.products);
+          }
+        })
+        .catch((err) => {
+          if (isCurrent) {
+            console.log("err:", err);
+            productFailAction(dispatch, err);
+          }
+        });
+    },
+    [currentPage, dispatch]
+  );
 
   useEffect(() => {
     let isCurrent = true;
-    productClearErrorsAction(dispatch);
-    productRequestAction(dispatch);
 
-    getProducts()
-      .then((res) => {
-        if (isCurrent) {
-          console.log("products:", res.data);
-          productSuccessAction(dispatch, res.data);
-          toast.success(`${res.data.products.length} Products fetched`);
+    loadProducts(isCurrent);
 
-          setProducts(res.data.products);
-        }
-      })
-      .catch((err) => {
-        if (isCurrent) {
-          console.log("err:", err);
-          productFailAction(dispatch, err);
-        }
-      });
     return () => {
       isCurrent = false;
     };
-  }, [dispatch]);
+  }, [loadProducts]);
 
   const productLayout = () =>
     products.length > 0 &&
@@ -54,7 +70,7 @@ const Home = () => {
       <SingleProduct key={product._id} product={product} />
     ));
 
-  if (loading) {
+  if (loading || !productsCount) {
     return <Loader />;
   }
   return (
@@ -68,6 +84,20 @@ const Home = () => {
           {productLayout()}
         </div>
       </section>
+      <div className="d-flex justify-content-center mt-5">
+        <Pagination
+          activePage={currentPage}
+          itemsCountPerPage={resPerPage}
+          totalItemsCount={productsCount}
+          onChange={setCurrentPageNo}
+          nextPageText={"Next"}
+          prevPageText={"Prev"}
+          firstPageText={"First"}
+          lastPageText={"Last"}
+          itemClass="page-item"
+          linkClass="page-link"
+        />
+      </div>
     </>
   );
 };

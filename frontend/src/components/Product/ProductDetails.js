@@ -11,6 +11,7 @@ import {
 import "../../App.css";
 import { getProductsDetails } from "../../function/products";
 import Loader from "../layout/Loader";
+import MetaData from "../../components/layout/MetaData";
 import { Carousel } from "react-bootstrap";
 
 const ProductDetails = () => {
@@ -55,8 +56,9 @@ const ProductDetails = () => {
 
   return (
     <div className="row f-flex justify-content-around">
+      <MetaData title={"Products Details of your chosen one"} />
       <div className="col-12 col-lg-5 img-fluid" id="product_image">
-        <Carousel pause="hove">
+        <Carousel pause="hover">
           {toast.success(`${images && images.length}`)}
           {images &&
             images.map((image) => (
