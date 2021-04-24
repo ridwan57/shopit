@@ -1,6 +1,6 @@
 export class APIFeatures {
   constructor(query, queryStr) {
-    console.log("queryStr:", queryStr);
+    console.log('queryStr:', queryStr);
     this.query = query;
     this.queryStr = queryStr;
   }
@@ -10,7 +10,7 @@ export class APIFeatures {
       ? {
           name: {
             $regex: this.queryStr.keyword,
-            $options: "i",
+            $options: 'i',
           },
         }
       : {};
@@ -23,7 +23,7 @@ export class APIFeatures {
     const queryCopy = { ...this.queryStr };
 
     // Removing fields from the query
-    const removeFields = ["keyword", "limit", "page"];
+    const removeFields = ['keyword', 'limit', 'page'];
     removeFields.forEach((el) => delete queryCopy[el]);
 
     // Advance filter for price, ratings etc
