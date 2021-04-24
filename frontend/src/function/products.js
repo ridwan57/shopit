@@ -4,16 +4,15 @@ export const getProducts = async (
   keyword = "",
   pageNo = 1,
   price = [1, 100],
-  category
+  category,
+  rating = 1
 ) => {
+  const link = `${process.env.REACT_APP_API}/products?keyword=${keyword}&page=${pageNo}&price[lte]=${price[1]}&price[gte]=${price[0]}&ratings[gte]=${rating}`;
+
   if (category) {
-    return axios.get(
-      `${process.env.REACT_APP_API}/products?keyword=${keyword}&page=${pageNo}&price[lte]=${price[1]}&price[gte]=${price[0]}&category=${category}`
-    );
+    return axios.get(`${link}&category=${category}`);
   } else {
-    return axios.get(
-      `${process.env.REACT_APP_API}/products?keyword=${keyword}&page=${pageNo}&price[lte]=${price[1]}&price[gte]=${price[0]}`
-    );
+    return axios.get(`${link}`);
   }
 };
 

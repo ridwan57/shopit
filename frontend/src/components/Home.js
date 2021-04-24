@@ -38,7 +38,9 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [price, setPrice] = useState([1, 1000]);
   const [category, setCategory] = useState(null);
-  console.log("category:", category);
+  const [rating, setRating] = useState(1);
+  console.log("rating:", rating);
+
   const priceRef = React.useRef(price);
 
   const categories = [
@@ -66,7 +68,7 @@ const Home = () => {
       productClearErrorsAction(dispatch);
       productRequestAction(dispatch);
 
-      getProducts(keyword, currentPage, price, category)
+      getProducts(keyword, currentPage, price, category, rating)
         .then((res) => {
           if (isCurrent) {
             console.log("products:", res.data);
@@ -83,7 +85,7 @@ const Home = () => {
           }
         });
     },
-    [currentPage, dispatch, keyword, price, category]
+    [currentPage, dispatch, keyword, price, category, rating]
   );
 
   useEffect(() => {
@@ -195,6 +197,36 @@ const Home = () => {
                         <h5 className="btn btn-success">{category}</h5>
                       )}
                     </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <h4 className="mb-3">Ratings</h4>
+
+                    <ul className="pl-0">
+                      {[5, 4, 3, 2, 1].map((star) => (
+                        <li
+                          className="active"
+                          style={{
+                            cursor: "pointer",
+                            // listStyleType: "none",
+                            color: `${rating === star ? "red" : "black"}`,
+                            minInlineSize: "10px",
+                          }}
+                          key={star}
+                          onClick={() => setRating(star)}
+                        >
+                          <div className="rating-outer">
+                            <div
+                              className="rating-inner"
+                              style={{
+                                width: `${star * 20}%`,
+                                color: "green",
+                              }}
+                            ></div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>

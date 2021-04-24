@@ -12,7 +12,7 @@ function App() {
     <div className="App">
       <Router>
         <Header />
-        <ToastContainer position="top-center" />
+        <ToastContainer position="top-right" />
         <div className="container container-fluid">
           <Route exact path="/" component={Home} />
           <Route exact path="/search/:keyword" component={Home} />
